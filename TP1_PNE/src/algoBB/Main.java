@@ -9,7 +9,7 @@ import java.util.Queue;
 
 public class Main 
 {
-	//Return the lower bound using a greedy algorithm
+	//Return the lower bound using a greedy algorithm (heuristic)
 	int borneInfGlouton(Objet listObjects[],int poidsMax)
 	{
 		int n = listObjects.length;
@@ -31,8 +31,8 @@ public class Main
 		int position = 0;
 		int poidsInf = 0;
 		int borneInfTest = 0;
-		for(j = 0;j<n;j++){
-			for(i = 0;i<n;i++){ // Find possible object with better ratio
+		for(int j = 0;j<n;j++){
+			for(int i = 0;i<n;i++){ // Find possible object with better ratio
 				if(ratioActuel<mesObjets[i].r && mesObjets[i].getX() == true){
 					ratioActuel = mesObjets[i].r;
 					position  = i;
@@ -48,10 +48,9 @@ public class Main
 		return borneInfTest; 
 	}
 	//Return the upper bound using Fayard and Plateau method
-	static float borneSupFayard(Node node, List<Objet> listObjects,int poidsMax){
+	static float borneSupFayard(Node node, List<Objet> listObjects,int poidsMax,int n){
 		if (node.getWeight() >= poidsMax)
 			return 0;
-		int n = listObjects.size();
 		int i = node.getPos();
 		float actualUse = node.getUse();
 		float actualWeight = node.getWeight();
@@ -69,7 +68,7 @@ public class Main
 		return actualUse;
 	}
 	
-	public static float algoBB(List<Objet> objets, int poidsMax)
+	public static float algoBB(List<Objet> objets, int poidsMax,int n)
 	{
 		Queue<Node> queue = new LinkedList<Node>();
 		Node nodeRacine;
@@ -77,7 +76,6 @@ public class Main
 		nodeRacine.setWeight(0);
 		nodeRacine.setPos(-1);
 		queue.add(nodeRacine);
-		int n = objets.size();
 		float utiliteMax = 0;
 		for (Node nodePere; (nodePere = queue.poll()) != null;)
 		{
@@ -90,7 +88,7 @@ public class Main
 		    nodeFils.setUse( nodePere.c + objets.get(nodeFils.pos).c ); // add previous utility
 		    if(nodeFils.p <= poidsMax && nodeFils.c > utiliteMax) // Lower than max weight - better usefulness
 		        utiliteMax = nodeFils.c;
-	        float borneSup = borneSupFayard(nodeFils,objets,poidsMax);
+	        float borneSup = borneSupFayard(nodeFils,objets,poidsMax,n);
 		    nodeFils.borneSup = borneSup;
 	        if (nodeFils.borneSup > utiliteMax)
 	        {
@@ -125,7 +123,7 @@ public class Main
 		{
 			System.out.println(o.toString());
 		}
-		System.out.println("L'utilite max de ce probleme est : "+algoBB(objets,poidsMax));
+		System.out.println("L'utilite max de ce probleme est : "+algoBB(objets,poidsMax,n));
 		
 		
 
