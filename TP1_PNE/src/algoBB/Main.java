@@ -48,45 +48,64 @@ public class Main
 		return borneInfTest; 
 	}
 	//Return the upper bound using Fayard and Plateau method
-	int borneSupFayard(Objet mesObjets[],int poidsSac){
-		float fraction = (float) (poidsSac - poidsInf)/mesObjets[position].p;
-		int borneSup = borneInferieurOpt+ fraction*mesObjets[position].c;
-		return borneSup;
-	}
-	//Reset every object as a possible choice
-	void remiseAzero(Objet mesObjets[]){ // every object is a possible choice
-		for(i = 0;i<n;i++){
-			mesObjets[i].x = 0;
+	static float borneSupFayard(Node node, List<Objet> listObjects,int poidsMax){
+		if (node.getWeight() >= poidsMax)
+			return 0;
+		int n = listObjects.size();
+		int i = node.getPos();
+		float actualUse = node.getUse();
+		float actualWeight = node.getWeight();
+		while ((i < n) && (actualWeight + listObjects.get(i).getWeight() <= poidsMax))
+	    {
+	        actualWeight    += listObjects.get(i).getWeight();
+	        actualUse += listObjects.get(i).getUse();
+	        i++;
+	    }
+		if (i < n)
+		{
+			float fraction = (poidsMax - actualWeight) / listObjects.get(i).getWeight();
+			actualUse += fraction*listObjects.get(i).getUse();
 		}
+		return actualUse;
 	}
-	public static void algoBB(Objet objets[], int poidsMax, int n)
+	
+	public static float algoBB(List<Objet> objets, int poidsMax)
 	{
 		Queue<Node> queue = new LinkedList<Node>();
-		Node u,nodeFils;
-		u = new Node();
-		nodeFils = new Node();
-		u.setWeight(0);
-		queue.add(u);
+		Node nodeRacine;
+		nodeRacine = new Node();
+		nodeRacine.setWeight(0);
+		nodeRacine.setPos(-1);
+		queue.add(nodeRacine);
+		int n = objets.size();
 		float utiliteMax = 0;
 		for (Node nodePere; (nodePere = queue.poll()) != null;)
 		{
 		    if (nodePere.getPos() == n-1) //Every object tested
 		    	continue;
 		    // Case 1 - We put the object in the bag ---------------------
-		    nodeFils.setPos(2);
-		    nodeFils.setPos(nodePere.getPos()+1); // We are 1 level lower in tree
-		    nodeFils.setWeight( nodePere.getPos() + objets[nodePere.pos].p ) ;  // add previous weight
-		    nodeFils.setUse( nodePere.getUse() + objets[nodePere.getPos()].getC() ); // add previous utility
+		    Node nodeFils = new Node();
+		    nodeFils.setPos(nodePere.pos+1); // We are 1 level lower in tree
+		    nodeFils.setWeight(nodePere.p + objets.get(nodeFils.pos).p ) ;  // add previous weight
+		    nodeFils.setUse( nodePere.c + objets.get(nodeFils.pos).c ); // add previous utility
 		    if(nodeFils.p <= poidsMax && nodeFils.c > utiliteMax) // Lower than max weight - better usefulness
-		        utiliteMax = nodeFils.getUse();
-	        nodeFils.borneSup = borneSupFayard(objets, poidsMax);
+		        utiliteMax = nodeFils.c;
+	        float borneSup = borneSupFayard(nodeFils,objets,poidsMax);
+		    nodeFils.borneSup = borneSup;
 	        if (nodeFils.borneSup > utiliteMax)
-	        
+	        {
+	        	queue.add(nodeFils);
+	        }
 	        // Case 2 - We don't put the object in the bag ---------------------
-		    nodeFils.p = u.p;  // add previous weight
-		    nodeFils.c = u.c; // add previous utility
-		    if (nodeFils.borneSup > utiliteMax)
+	        Node nodeFilsOut = new Node();
+	        nodeFilsOut.pos = nodePere.pos+1;
+	        nodeFilsOut.p = nodePere.p;  // add previous weight
+	        nodeFilsOut.c = nodePere.c; // add previous utility
+	        nodeFilsOut.borneSup = borneSup;
+		    if (nodeFilsOut.borneSup > utiliteMax)
+		    	queue.add(nodeFilsOut);
 		}
+		return utiliteMax;
 	}
 	public static void main(String[] args) 
 	{
@@ -100,11 +119,13 @@ public class Main
 			new Objet(6,11) );
 		int n  = objets.size();
 		Comparator<Objet> comparator = (x, y) -> (x.c < y.c) ? 1 : ((x.c == y.c) ? 0 : -1); // sort on usefulness
-		Collections.sort(objets, Objet.getUsefulnessComparator());
+		//Collections.sort(objets, Objet.getUsefulnessComparator());
+		Collections.sort(objets);;
 		for(Objet o : objets)
 		{
 			System.out.println(o.toString());
 		}
+		System.out.println("L'utilite max de ce probleme est : "+algoBB(objets,poidsMax));
 		
 		
 
