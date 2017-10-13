@@ -33,7 +33,7 @@ public class Node
     public void setBorneSup(int chBorne){borneSup = chBorne;}
     public String toString()
     {
-    	String a = "Le sac contient : \n";
+    	String a = "The bag contains : \n";
     	for (Objet o : tabObj)
     	{
     		a+= o.toString()+"\n";

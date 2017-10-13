@@ -9,7 +9,7 @@ import java.util.Queue;
 
 public class Main 
 {
-	//Return the lower bound using a greedy algorithm (heuristic)
+	//Return the lower bound using a greedy algorithm (heuristic) (based on 
 	static int borneInfGlouton(List<Objet> listObjects,int poidsMax)
 	{
 		int n = listObjects.size();
@@ -24,30 +24,6 @@ public class Main
 		}
 		return borneInfTest; 
 	}
-	/*
-	//Return the lower bound using Fayard and Plateau method
-	static int borneInfFayard(Objet mesObjets[],int poidsSac){
-		int n = mesObjets.length;
-		float ratioActuel = mesObjets[0].r;
-		int position = 0;
-		int poidsInf = 0;
-		int borneInfTest = 0;
-		for(int j = 0;j<n;j++){
-			for(int i = 0;i<n;i++){ // Find possible object with better ratio
-				if(ratioActuel<mesObjets[i].r && mesObjets[i].getX() == true){
-					ratioActuel = mesObjets[i].r;
-					position  = i;
-				}
-			}
-			if(poidsInf+mesObjets[position].p > poidsSac)
-				break;
-			mesObjets[position].x = false;
-			poidsInf += mesObjets[position].p;
-			borneInfTest += mesObjets[position].c;
-			ratioActuel = 0;
-		}
-		return borneInfTest; 
-	}*/
 	
 	//Return the upper bound using Fayard and Plateau method
 	static float borneSupFayard(Node node, List<Objet> listObjects,int poidsMax,int n){
@@ -116,7 +92,7 @@ public class Main
 	}
 	public static void main(String[] args) 
 	{
-		//Data creation---------------------------------
+		//Data creation - Test Algorithm BB---------------------------------
 		int poidsMax = 17;
 		List<Objet> objets = Arrays.asList(
 			new Objet(3,8),
@@ -127,15 +103,20 @@ public class Main
 		Comparator<Objet> comparator = (x, y) -> (x.c < y.c) ? 1 : ((x.c == y.c) ? 0 : -1); // sort on usefulness
 		//Collections.sort(objets, Objet.getUsefulnessComparator());
 		Collections.sort(objets);
-		System.out.println("Voici les objets disponibles :");
+		System.out.println("Here is the possible objects :");
 		for(Objet o : objets)
 		{
 			System.out.println(o.toString());
 		}
 		Node finalNode = algoBB(objets,poidsMax,n);
-		System.out.println("\nL'utilite max de ce probleme est : "+finalNode.c);
+		System.out.println("\nMax usefulness is : "+finalNode.c);
 		System.out.println(finalNode.toString());
 		
+		//Data creation - Test Algorithm BB multi-constraints---------------------------------
+		List<Objet> objets2 = Arrays.asList(
+			new Objet(3,8),
+			new Objet(7,18));
+		int n2  = objets.size();
 
 	}
 
