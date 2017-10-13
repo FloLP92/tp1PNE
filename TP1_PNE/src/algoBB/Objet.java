@@ -5,7 +5,7 @@ import java.util.Comparator;
 public class Objet implements Comparable<Objet>
 {
 	float p; // Weight
-	float c; // Usefulness
+	int c; // Usefulness
 	float r; // Ratio Usefulness/Weight
 	boolean fixe; // Present or not in the bag (fixed)
     

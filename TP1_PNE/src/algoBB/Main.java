@@ -10,20 +10,21 @@ import java.util.Queue;
 public class Main 
 {
 	//Return the lower bound using a greedy algorithm (heuristic)
-	int borneInfGlouton(Objet listObjects[],int poidsMax)
+	static int borneInfGlouton(List<Objet> listObjects,int poidsMax)
 	{
-		int n = listObjects.length;
+		int n = listObjects.size();
 		int actualWeight = 0; 
 		int borneInfTest = 0;
 		for(int i = 0;i<n;i++)
 		{ 
-			if(actualWeight+listObjects[i].p > poidsMax)
+			if(actualWeight+listObjects.get(i).p > poidsMax)
 				continue;
-			actualWeight += listObjects[i].getWeight();
-			borneInfTest += listObjects[i].c;
+			actualWeight += listObjects.get(i).getWeight();
+			borneInfTest += listObjects.get(i).c;
 		}
 		return borneInfTest; 
 	}
+	/*
 	//Return the lower bound using Fayard and Plateau method
 	static int borneInfFayard(Objet mesObjets[],int poidsSac){
 		int n = mesObjets.length;
@@ -46,7 +47,8 @@ public class Main
 			ratioActuel = 0;
 		}
 		return borneInfTest; 
-	}
+	}*/
+	
 	//Return the upper bound using Fayard and Plateau method
 	static float borneSupFayard(Node node, List<Objet> listObjects,int poidsMax,int n){
 		if (node.getWeight() >= poidsMax)
@@ -68,15 +70,16 @@ public class Main
 		return actualUse;
 	}
 	
-	public static float algoBB(List<Objet> objets, int poidsMax,int n)
+	public static Node algoBB(List<Objet> objets, int poidsMax,int n)
 	{
 		Queue<Node> queue = new LinkedList<Node>();
 		Node nodeRacine;
+		Node finalNode = new Node();
 		nodeRacine = new Node();
 		nodeRacine.setWeight(0);
 		nodeRacine.setPos(-1);
 		queue.add(nodeRacine);
-		float utiliteMax = 0;
+		int utiliteMax = borneInfGlouton(objets, poidsMax);
 		for (Node nodePere; (nodePere = queue.poll()) != null;)
 		{
 		    if (nodePere.getPos() == n-1) //Every object tested
@@ -86,8 +89,13 @@ public class Main
 		    nodeFils.setPos(nodePere.pos+1); // We are 1 level lower in tree
 		    nodeFils.setWeight(nodePere.p + objets.get(nodeFils.pos).p ) ;  // add previous weight
 		    nodeFils.setUse( nodePere.c + objets.get(nodeFils.pos).c ); // add previous utility
+		    Objet o = objets.get(nodeFils.pos);
+		    nodeFils.setTabObj(nodePere.addObject(o));
 		    if(nodeFils.p <= poidsMax && nodeFils.c > utiliteMax) // Lower than max weight - better usefulness
-		        utiliteMax = nodeFils.c;
+		    {
+		    	utiliteMax = nodeFils.c;
+		    	finalNode = nodeFils;
+		    }
 	        float borneSup = borneSupFayard(nodeFils,objets,poidsMax,n);
 		    nodeFils.borneSup = borneSup;
 	        if (nodeFils.borneSup > utiliteMax)
@@ -97,19 +105,19 @@ public class Main
 	        // Case 2 - We don't put the object in the bag ---------------------
 	        Node nodeFilsOut = new Node();
 	        nodeFilsOut.pos = nodePere.pos+1;
+	        nodeFilsOut.tabObj = nodePere.tabObj;
 	        nodeFilsOut.p = nodePere.p;  // add previous weight
 	        nodeFilsOut.c = nodePere.c; // add previous utility
 	        nodeFilsOut.borneSup = borneSup;
-		    if (nodeFilsOut.borneSup > utiliteMax)
+		    if (nodeFilsOut.borneSup > utiliteMax) // If borneSup not greater, useless to go further in tree
 		    	queue.add(nodeFilsOut);
 		}
-		return utiliteMax;
+		return finalNode;
 	}
 	public static void main(String[] args) 
 	{
 		//Data creation---------------------------------
 		int poidsMax = 17;
-		int poidsActuel = 0;
 		List<Objet> objets = Arrays.asList(
 			new Objet(3,8),
 			new Objet(7,18),
@@ -118,13 +126,15 @@ public class Main
 		int n  = objets.size();
 		Comparator<Objet> comparator = (x, y) -> (x.c < y.c) ? 1 : ((x.c == y.c) ? 0 : -1); // sort on usefulness
 		//Collections.sort(objets, Objet.getUsefulnessComparator());
-		Collections.sort(objets);;
+		Collections.sort(objets);
+		System.out.println("Voici les objets disponibles :");
 		for(Objet o : objets)
 		{
 			System.out.println(o.toString());
 		}
-		System.out.println("L'utilite max de ce probleme est : "+algoBB(objets,poidsMax,n));
-		
+		Node finalNode = algoBB(objets,poidsMax,n);
+		System.out.println("\nL'utilite max de ce probleme est : "+finalNode.c);
+		System.out.println(finalNode.toString());
 		
 
 	}
