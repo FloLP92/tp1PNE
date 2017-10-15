@@ -116,10 +116,17 @@ public class Main
 		System.out.println(finalNode.toString());
 		
 		//Data creation - Test Algorithm BB multi-constraints---------------------------------
+		
+		//Create a new Constraint
 		List<Objet> objets2 = Arrays.asList(
 			new Objet(3,8),
 			new Objet(7,18));
 		int n2  = objets.size();
+		int poidsMax2 = 8;
+		Collections.sort(objets2);
+		
+		Constraint c1 = new Constraint(objets,poidsMax);
+		Constraint c2 = new Constraint(objets2,poidsMax2);
 
 	}
 
