@@ -9,7 +9,7 @@ import java.util.Queue;
 
 public class Main 
 {
-	//Return the lower bound using a greedy algorithm (heuristic) (based on 
+	//Return the lower bound using a greedy algorithm (heuristic) (approached method) 
 	static int borneInfGlouton(List<Objet> listObjects,int poidsMax)
 	{
 		int n = listObjects.size();
@@ -17,10 +17,10 @@ public class Main
 		int borneInfTest = 0;
 		for(int i = 0;i<n;i++)
 		{ 
-			if(actualWeight+listObjects.get(i).p > poidsMax)
+			if(actualWeight+listObjects.get(i).p > poidsMax) //If we can add the next item
 				continue;
-			actualWeight += listObjects.get(i).getWeight();
-			borneInfTest += listObjects.get(i).c;
+			actualWeight += listObjects.get(i).getWeight(); //add weight to bag
+			borneInfTest += listObjects.get(i).c; //add utility to bag
 		}
 		return borneInfTest; 
 	}
@@ -32,13 +32,13 @@ public class Main
 		int i = node.getPos();
 		float actualUse = node.getUse();
 		float actualWeight = node.getWeight();
-		while ((i < n) && (actualWeight + listObjects.get(i).getWeight() <= poidsMax))
+		while ((i < n) && (actualWeight + listObjects.get(i).getWeight() <= poidsMax)) //Like Glouton method
 	    {
 	        actualWeight    += listObjects.get(i).getWeight();
 	        actualUse += listObjects.get(i).getUse();
 	        i++;
 	    }
-		if (i < n)
+		if (i < n) // add a fraction of the next item to reach maximum weight of the bag
 		{
 			float fraction = (poidsMax - actualWeight) / listObjects.get(i).getWeight();
 			actualUse += fraction*listObjects.get(i).getUse();
@@ -48,14 +48,14 @@ public class Main
 	
 	public static Node algoBB(List<Objet> objets, int poidsMax,int n)
 	{
-		Queue<Node> queue = new LinkedList<Node>();
+		Queue<Node> queue = new LinkedList<Node>(); //Creation of an empty node 
 		Node nodeRacine;
 		Node finalNode = new Node();
 		nodeRacine = new Node();
 		nodeRacine.setWeight(0);
 		nodeRacine.setPos(-1);
 		queue.add(nodeRacine);
-		int utiliteMax = borneInfGlouton(objets, poidsMax);
+		int utiliteMax = borneInfGlouton(objets, poidsMax); // get inf bound  
 		for (Node nodePere; (nodePere = queue.poll()) != null;)
 		{
 		    if (nodePere.getPos() == n-1) //Every object tested
@@ -65,8 +65,11 @@ public class Main
 		    nodeFils.setPos(nodePere.pos+1); // We are 1 level lower in tree
 		    nodeFils.setWeight(nodePere.p + objets.get(nodeFils.pos).p ) ;  // add previous weight
 		    nodeFils.setUse( nodePere.c + objets.get(nodeFils.pos).c ); // add previous utility
+		    
+		    //recover data of the useful items( items in bag or not) 
 		    Objet o = objets.get(nodeFils.pos);
 		    nodeFils.setTabObj(nodePere.addObject(o));
+		    
 		    if(nodeFils.p <= poidsMax && nodeFils.c > utiliteMax) // Lower than max weight - better usefulness
 		    {
 		    	utiliteMax = nodeFils.c;
@@ -74,7 +77,7 @@ public class Main
 		    }
 	        float borneSup = borneSupFayard(nodeFils,objets,poidsMax,n);
 		    nodeFils.borneSup = borneSup;
-	        if (nodeFils.borneSup > utiliteMax)
+	        if (nodeFils.borneSup > utiliteMax) // If we get a better usefulness : keep going with add in queue 
 	        {
 	        	queue.add(nodeFils);
 	        }
