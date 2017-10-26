@@ -86,10 +86,11 @@ public class Main
 		    // object belongs to the node
 		    Objet o = objets.get(nodeFils.pos);
 		    nodeFils.setTabObj(nodePere.addObject(o));
-		    
-		    if(nodeFils.p <= poidsMax && nodeFils.c > utiliteMax) // Lower than max weight - better usefulness
+		    if( (nodeFils.p <= poidsMax && nodeFils.c > utiliteMax) || 
+		    		(nodeFils.p <= poidsMax && nodeFils.c == utiliteMax && finalNode.c == 0 && utiliteMax > 0) )  // Lower than max weight - better usefulness (or same than glouton algorithm but only first time)
 		    {
 		    	utiliteMax = nodeFils.c;
+		    	System.out.println("umaxNew "+utiliteMax);
 		    	finalNode = nodeFils;
 		    }
 	        float borneSup = borneSupFayard(nodeFils,objets,poidsMax,n);
@@ -127,33 +128,41 @@ public class Main
 		float erreurx = 1000;
 		float erreury = 1000;
 		float erreur = 1000;
-		float dEdx = 1;
-		float dEdy = 1;
+		float dEdx = 1,dEdy = 1;
 		int i;
 		for(i = 0; i < 1000 && erreur > 0.01; i++)
 		{
-			E = (x-1)*(x-2) + (y+3)*(y+4);
-			dEdx = 2*x-3;
-			dEdy = 2*y+7;
-			x -= nu*dEdx;
+			E = (x-1)*(x-2) + (y+3)*(y+4); //equation
+			dEdx = 2*x-3; //dérivate by x
+			dEdy = 2*y+7; //derivate by y
+			x -= nu*dEdx; 
 			y -= nu*dEdy;
-			erreurx = (dEdx > 0) ? dEdx : -dEdx;
-			erreury = (dEdy > 0) ? dEdy : -dEdy;
-			erreur = (erreurx > erreury) ? erreurx : erreury;
+			erreurx = (dEdx > 0) ? dEdx : -dEdx; //absolute value
+			erreury = (dEdy > 0) ? dEdy : -dEdy; //absolute value
+			erreur = (erreurx > erreury) ? erreurx : erreury; //we take the biggest error
 		}
 		System.out.println("i = "+i+", x = "+x+", y = "+y+", E = "+E);
 		System.out.println("dE/dx = "+dEdx+", dE/dy = "+dEdy);
 	}
-	
+	/*
+	public List<Objet> creationListKeyboard()
+	{
+		List<Objet> objets = Arrays.asList();
+		return objets
+	}*/
 	public static void main(String[] args) 
 	{
 		/** Data creation - Test Algorithm BB **/
 		int poidsMax = 17;
 		List<Objet> objets = Arrays.asList(
+			/*
 			new Objet(3,8),
 			new Objet(7,18),
 			new Objet(9,20),
-			new Objet(6,11) );
+			new Objet(6,11) );*/
+			new Objet(6,10),
+			new Objet(3,36),
+			new Objet(7,40) );	
 		int n  = objets.size();
 		/** sort on usefulness **/
 		//Collections.sort(objets, Objet.getUsefulnessComparator()); 
@@ -168,6 +177,7 @@ public class Main
 		
 		//Data creation - Test Algorithm BB multi-constraints---------------------------------
 		
+		/*
 		//Create a new Constraint
 		List<Objet> objets2 = Arrays.asList(
 			new Objet(3,8),
@@ -180,6 +190,7 @@ public class Main
 		Constraint c2 = new Constraint(objets2,poidsMax2);
 		
 		gradient(1,2);
+		*/
 
 	}
 

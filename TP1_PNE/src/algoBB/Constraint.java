@@ -2,7 +2,8 @@ package algoBB;
 
 import java.util.List;
 
-public class Constraint {
+public class Constraint 
+{
 	List<Objet> mesObjets;
 	int poidsMax;
 	

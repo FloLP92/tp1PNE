@@ -14,6 +14,7 @@ public class Node
     public Node()
     {
     	tabObj = new ArrayList<Objet>();
+    	p = 0;
     }
     /** Get and Set **/
     public ArrayList<Objet> getTabObj(){return tabObj;}
