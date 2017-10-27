@@ -176,7 +176,6 @@ public class Main
 		System.out.println(finalNode.toString());
 		
 		//Data creation - Test Algorithm BB multi-constraints---------------------------------
-		
 		/*
 		//Create a new Constraint
 		List<Objet> objets2 = Arrays.asList(
