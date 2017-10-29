@@ -173,21 +173,7 @@ public class Main
 		System.out.println("\nMax usefulness is : "+finalNode.c);
 		System.out.println("Weight would be : "+finalNode.p);
 		System.out.println(finalNode.toString());
-		
-		/** ---------------------------------Raisonnement BB multi-constraints---------------------------------**/
-		/** On a un ensemble de contraintes w1...wn et une fonction objectif f
-		 * On cherche à représenter le problème sous une seule contrainte
-		 * On va additionner l'ensemble des contraintes pour obtenir une contrainte finale donnée par le vecteur w = (1 1 ... 1) 
-		 * (La dimension du vecteur w est égale au nombre de contraintes w1...wn = n)
-		 * On cherche a minimiser notre ensemble f et w1...wn à l'aide du vecteur d'agrégation w
-		 * w n'est pas performant actuellement et pourrait être améliorer
-		 * On va lancer la descente de gradient pour affiner w, notre but étant d'obtenir un vecteur qui minimise au maximum notre ensemble f + w1...wn
-		 * Pour réaliser cela on doit choisir la direction de descente qui est basée sur le gradient de notre fonction objectif
-		 * (Il faut prendre en compte que la dimension du gradient de f peut ne pas être égale à celle de w (nombre de contraintes) )
-		 * Une fois cela pris en compte, on peut utiliser l'algorithme de gradient donné sur le polycopié et présent ci-dessus
-		 * A chaque étape on va jouer sur l'un des coefficients du facteur pour se rapprocher de la direction évaluée et affiner notre w
-		 * On obtiendra finalement un vecteur d'agrégation w qui pourra minimiser de facon optimale f et w1...wn
-		**/
+
 	}
 
 }
